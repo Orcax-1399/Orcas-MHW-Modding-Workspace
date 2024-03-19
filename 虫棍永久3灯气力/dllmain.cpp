@@ -39,7 +39,7 @@ void mainFunc() {
     {
         return;
     }
-    void* weaponEntity = ptrOffsetCalc(0x145011760, { 0x50, 0x76B0 });
+    void* weaponEntity = multiLevelPointerOffset(0x145011760, { 0x50, 0x76B0 });
     if (weaponEntity == nullptr) { return; }
     float* redLight = offsetPtr<float>(weaponEntity, 0x2368);
     float* yellowLight = offsetPtr<float>(weaponEntity, 0x236C);

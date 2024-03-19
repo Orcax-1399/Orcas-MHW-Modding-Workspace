@@ -16,8 +16,15 @@ using namespace toolStruct;
 
 
 namespace tool {
-    ///计算多级偏移，ptr是基址，后面传入一个偏移组
-    void* ptrOffsetCalc(long long ptr, vector<int> v) {
+    /// <summary>
+    /// 计算多级偏移，ptr是基址，后面传入一个偏移组，最后一级的偏移也会参与计算
+    /// 如果参照ce，则相当于多级指针最后再加一个0的offset
+    /// 后续尽可能都使用 **cheatEnginePtrOffset**方法。
+    /// </summary>
+    /// <param name="ptr"></param>
+    /// <param name="v"></param>
+    /// <returns></returns>
+    void* multiLevelPointerOffset(long long ptr, vector<int> v) {
         void* tmpPtr = *(undefined**)ptr;
         for (int offset : v)
         {
@@ -30,7 +37,14 @@ namespace tool {
         return tmpPtr;
     }
 
-    //还原了CE中的多级指针偏移方法
+    /// <summary>
+    /// 还原了CE中的多级指针偏移方法
+    /// 和CE一样的指针偏移方法，后续尽可能都替换为这个。
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ptr">：一个8字节指针</param>
+    /// <param name="offsets">：偏移组，向量形式</param>
+    /// <returns></returns>
     template<class T>
     T* cheatEnginePtrOffset(long long ptr, vector<int> offsets) {
         uint64_t* internalPtr = (uint64_t*)ptr;
@@ -85,10 +99,10 @@ namespace tool {
         coordinate wayPointCoordinate{ -1,-1,-1 };
         worldInfo.mapId = -1;
         worldInfo.wayPointCoordinate = wayPointCoordinate;
-        void* mapPtr = ptrOffsetCalc(0x145011760, { 0x50, 0x7D20 });
+        void* mapPtr = multiLevelPointerOffset(0x145011760, { 0x50, 0x7D20 });
         if (mapPtr == nullptr) { return worldInfo; }
         worldInfo.mapId = *offsetPtr<int>(mapPtr, 0xB88);
-        void* worldDataPtr = ptrOffsetCalc(0x1451ca0c0, { 0x48, 0x58, 0x58, 0x40 });
+        void* worldDataPtr = multiLevelPointerOffset(0x1451ca0c0, { 0x48, 0x58, 0x58, 0x40 });
         if (worldDataPtr == nullptr) { return worldInfo; }
         wayPointCoordinate.x = *offsetPtr<float>(worldDataPtr, 0x2D0);
         wayPointCoordinate.y = *offsetPtr<float>(worldDataPtr, 0x2D4);
@@ -116,22 +130,22 @@ namespace tool {
         weaponInfo.type = PlayerWeaponType::ErrorWeapon;
         weaponInfo.id = NULL;
         weaponInfo.sharpness = nullptr;
-        void* weaponType = ptrOffsetCalc(0x145011760, { 0x50,0xc0,0x8,0x78 });
+        void* weaponType = multiLevelPointerOffset(0x145011760, { 0x50,0xc0,0x8,0x78 });
         if (weaponType == nullptr) { return weaponInfo; }
         weaponInfo.type = static_cast<toolStruct::PlayerWeaponType>(*offsetPtr<int>(weaponType, 0x2e8));
         weaponInfo.id = *offsetPtr<int>(weaponType, 0x2ec);
-        void* weaponSharpness = ptrOffsetCalc(0x145011760, { 0x50 ,0x76b0 });
+        void* weaponSharpness = multiLevelPointerOffset(0x145011760, { 0x50 ,0x76b0 });
         if (weaponSharpness == nullptr) { return weaponInfo; }
         weaponInfo.sharpness = offsetPtr<int>(weaponSharpness, 0x20F8);
         return weaponInfo;
     }
     void* GetWeaponEntityPtr() {
-        auto weaponEntity = tool::ptrOffsetCalc(0x145011760, { 0x50, 0x76B0 });
+        auto weaponEntity = tool::multiLevelPointerOffset(0x145011760, { 0x50, 0x76B0 });
         return weaponEntity;
     }
     ///返回人物状态指针，没拿到就是空指针
     int* GetPlayerStatePtr() {
-        void* playerStatePtr = ptrOffsetCalc(0x145011760, { 0x50 , 0xE470 });
+        void* playerStatePtr = multiLevelPointerOffset(0x145011760, { 0x50 , 0xE470 });
         if (playerStatePtr == nullptr) { return nullptr; }
         return offsetPtr<int>(playerStatePtr, 0x0B);
     }
@@ -140,19 +154,19 @@ namespace tool {
     /// </summary>
     /// <returns></returns>
     ::byte* GetMutekiStatePtr() {
-        void* MutekiStatePtr = ptrOffsetCalc(0x145011760, { 0x50 ,0x6A8 });
+        void* MutekiStatePtr = multiLevelPointerOffset(0x145011760, { 0x50 ,0x6A8 });
         if (MutekiStatePtr == nullptr) { return nullptr; }
         return offsetPtr<::byte>(MutekiStatePtr, 0x198);
     }
     ///返回LMT指针，直接获取和操作都行
     int* GetLmtPtr() {
-        void* lmtAddr = ptrOffsetCalc(0x145011760, { 0x50 , 0x468 });
+        void* lmtAddr = multiLevelPointerOffset(0x145011760, { 0x50 , 0x468 });
         if (!lmtAddr) { return 0; }
         return offsetPtr<int>(lmtAddr, 0xE9C4);
     }
     ///返回拔刀状态地址指针
     int* GetWeaponDrawState() {
-        void* weaponDrawPtr = ptrOffsetCalc(0x145011760, { 0x50 });
+        void* weaponDrawPtr = multiLevelPointerOffset(0x145011760, { 0x50 });
         if (weaponDrawPtr == nullptr) { return nullptr; }
         return offsetPtr<int>(weaponDrawPtr, 0x76A8);
     }
@@ -257,7 +271,7 @@ namespace tool {
 
     void SceneSwitch(float nowTime, void (*callBackFunction)()) {
         void* TimePlot = LuaEngine::GetPlot(*(undefined**)MH::Player::PlayerBasePlot, { 0x50, 0x7D20 });
-        //void* TimePlot = ptrOffsetCalc(MH::Player::PlayerBasePlot,{ 0x50, 0x7D20 })
+        //void* TimePlot = multiLevelPointerOffset(MH::Player::PlayerBasePlot,{ 0x50, 0x7D20 })
         if (TimePlot != nullptr && nowTime > *offsetPtr<float>(TimePlot, 0xC24)) {
             callBackFunction();
         }
@@ -322,8 +336,10 @@ namespace tool {
         }
         ::copy(strUTF8.begin(), strUTF8.end(), msgBuffer);
         long long playerChatBase = 0x1451C2400;
-        bool* playerChatIdentifier = offsetPtr<bool>(ptrOffsetCalc(playerChatBase, { 0x13fd0 }), 0x325E);
-        GuiChat* chat = offsetPtr<GuiChat>(ptrOffsetCalc(playerChatBase, { 0x13fd0 }), 0x28f8);
+        /*bool* playerChatIdentifier = offsetPtr<bool>(multiLevelPointerOffset(playerChatBase, { 0x13fd0 }), 0x325E);
+        GuiChat* chat = offsetPtr<GuiChat>(multiLevelPointerOffset(playerChatBase, { 0x13fd0 }), 0x28f8);*/
+        bool* playerChatIdentifier = cheatEnginePtrOffset<bool>(playerChatBase, { 0x13fd0,0x325E });
+        GuiChat* chat = cheatEnginePtrOffset<GuiChat>(playerChatBase, { 0x13fd0,0x28f8 });
         memcpy(chat->chatBuffer, msgBuffer, 256);
         *playerChatIdentifier = true;
         return true;
@@ -462,11 +478,145 @@ namespace tool {
             return true;
         }
     };
+    class ConditionChecker {
+    private:
+        struct ConditionState {
+            double lockThreshold;
+            double unlockThreshold;
+        };
+
+        std::map<std::string, ConditionState> numericConditions;
+
+        struct TextConditionState {
+            std::string lockCondition;
+        };
+
+        std::map<std::string, TextConditionState> textConditions;
+
+
+        struct MultipleConditionState {
+            vector<float> lockThresholdArray;
+            vector<float> unlockThresholdArray;
+        };
+
+        map<string, MultipleConditionState> multipleConditions;
+
+        struct SimpleNumericCondition {
+            int lockCondition;
+        };
+
+        map <string, SimpleNumericCondition> simpleNumericConditions;
+    public:
+        // 数值条件检查
+        template<typename T>
+        bool CheckNumericCondition(T value, const std::string& identifier, T lockThreshold, T unlockThreshold) {
+            auto it = numericConditions.find(identifier);
+            if (it != numericConditions.end()) {
+                // 如果找到了标识符，检查是否应该解锁
+                if (value < it->second.unlockThreshold) {
+                    numericConditions.erase(it);  // 解锁，从map中移除
+                    return false;
+                }
+            }
+            else {
+                // 如果没找到标识符，检查是否应该上锁
+                if (value > lockThreshold) {
+                    // 上锁，添加到map中
+                    numericConditions[identifier] = { static_cast<double>(lockThreshold), static_cast<double>(unlockThreshold) };
+                    return true;
+                }
+            }
+            return false;
+        }
+        template<typename T>
+        bool CheckMultipleNumericCondition(const vector<T>& arr, const string& identifier, const vector<T>& lockThresholdArr, const vector<T>& unlockThresholdArr) {
+            // 检查是否已经上锁
+            auto it = multipleConditions.find(identifier);
+            if (it != multipleConditions.end()) {
+                // 已上锁，检查是否满足解锁条件
+                bool unlock = true;
+                for (size_t i = 0; i < arr.size(); ++i) {
+                    if (!(arr[i] < unlockThresholdArr[i])) {
+                        unlock = false;
+                        break;
+                    }
+                }
+                if (unlock) {
+                    // 满足解锁条件，从map中移除
+                    multipleConditions.erase(it);
+                }
+                return false;
+            }
+            else {
+                // 未上锁，检查是否满足上锁条件
+                bool lock = true;
+                for (size_t i = 0; i < arr.size(); ++i) {
+                    if (!(arr[i] > lockThresholdArr[i])) {
+                        lock = false;
+                        break;
+                    }
+                }
+                if (lock) {
+                    // 满足上锁条件，添加到map中
+                    MultipleConditionState state{ vector<float>(lockThresholdArr.begin(), lockThresholdArr.end()), vector<float>(unlockThresholdArr.begin(), unlockThresholdArr.end()) };
+                    multipleConditions[identifier] = state;
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// 简易数字检查
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="identifier"></param>
+        /// <param name="lockCondition"></param>
+        /// <returns></returns>
+        bool CheckSimpleNumericCondition(const int& value, const std::string& identifier, const int& lockCondition) {
+            auto it = simpleNumericConditions.find(identifier);
+            if (it != simpleNumericConditions.end()) {
+                // 如果找到了标识符，但当前值不等于锁定条件，则解锁
+                if (value != it->second.lockCondition) {
+                    simpleNumericConditions.erase(it);  // 解锁，从map中移除
+                    return false;
+                }
+            }
+            else {
+                // 如果没找到标识符，但当前值等于锁定条件，则上锁
+                if (value == lockCondition) {
+                    // 上锁，添加到map中
+                    simpleNumericConditions[identifier] = { lockCondition };
+                    return true;
+                }
+            }
+            return false;
+        }
+        // 文本条件检查
+        bool CheckTextCondition(const std::string& value, const std::string& identifier, const std::string& lockCondition) {
+            auto it = textConditions.find(identifier);
+            if (it != textConditions.end()) {
+                // 如果找到了标识符，但当前值不等于锁定条件，则解锁
+                if (value != it->second.lockCondition) {
+                    textConditions.erase(it);  // 解锁，从map中移除
+                    return false;
+                }
+            }
+            else {
+                // 如果没找到标识符，但当前值等于锁定条件，则上锁
+                if (value == lockCondition) {
+                    // 上锁，添加到map中
+                    textConditions[identifier] = { lockCondition };
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
     namespace MHweapon {
         namespace InsectGlaive {
             weaponStruct::InsectGlaive::InsectGlaivePtrs getWeaponData() {
                 weaponStruct::InsectGlaive::InsectGlaivePtrs emptyPtrStuct{};
-                void* weaponEntity = tool::ptrOffsetCalc(0x145011760, { 0x50, 0x76B0 });
+                void* weaponEntity = tool::multiLevelPointerOffset(0x145011760, { 0x50, 0x76B0 });
                 if (weaponEntity == nullptr) { return emptyPtrStuct; }
                 float* redLight = offsetPtr<float>(weaponEntity, 0x2368);
                 float* whiteLight = offsetPtr<float>(weaponEntity, 0x236C);

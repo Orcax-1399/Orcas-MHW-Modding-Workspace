@@ -12,13 +12,13 @@ using namespace loader;
 using namespace tool;
 
 bool modActivate = false;
-OnTimeButton keyEXPL;
+onTimeSequenceButtons keyEXPL({ 69,88,80,76 });
 void keyCheck() {
     Sleep(10000);
     while (true)
     {
         Sleep(50);
-        if (keyEXPL.IsMutipleButtonPressed({ 69,88,80,76 })) {// E X P L四个键 
+        if (keyEXPL.IsMultipleButtonPressed()) {// E X P L四个键 
             modActivate = !modActivate;
             string msg = modActivate ? "爆炸开火启动" : "爆炸开火关闭";
             ShowMessage(msg);
@@ -43,7 +43,7 @@ void onTime() {
         if (weaponInfo.type == PlayerWeaponType::Bow || weaponInfo.type == PlayerWeaponType::HeavyBowGun || weaponInfo.type == PlayerWeaponType::LightBowGun)
         {
             if (GetFSMInfo().fsmTarget != 3) continue; //判断是不是拔刀
-            void* explodeFirePtr = ptrOffsetCalc(0x145011760, { 0x50, 0xE470 });
+            void* explodeFirePtr = multiLevelPointerOffset(0x145011760, { 0x50, 0xE470 });
             if (explodeFirePtr == nullptr) continue;
             *offsetPtr<int>(explodeFirePtr, 0x190) = 1;//爆炸开火核心代码
         }
