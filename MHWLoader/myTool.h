@@ -612,6 +612,39 @@ namespace tool {
             return false;
         }
     };
+    class Timer {
+    public:
+        // 使用高精度时钟
+        using Clock = std::chrono::high_resolution_clock;
+        using TimePoint = std::chrono::time_point<Clock>;
+        using Milliseconds = std::chrono::milliseconds;
+
+    private:
+        std::map<std::string, TimePoint> timers;
+
+    public:
+        // 检查计时器是否已经冷却，并根据需要自动启动计时器
+        bool isCooledDown(const std::string& identifier, long long cooldownMillis) {
+            auto it = timers.find(identifier);
+            auto now = Clock::now();
+
+            if (it == timers.end()) {
+                // 如果找不到计时器，设置当前时间戳并返回true
+                timers[identifier] = now;
+                return true;
+            }
+
+            auto elapsed = std::chrono::duration_cast<Milliseconds>(now - it->second);
+            if (elapsed.count() >= cooldownMillis) {
+                // 如果已经冷却，更新计时器的时间戳并返回true
+                timers[identifier] = now;
+                return true;
+            }
+
+            // 如果还没有冷却，返回false
+            return false;
+        }
+    };
     namespace MHweapon {
         namespace InsectGlaive {
             weaponStruct::InsectGlaive::InsectGlaivePtrs getWeaponData() {

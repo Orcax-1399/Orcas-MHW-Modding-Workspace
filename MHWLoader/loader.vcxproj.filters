@@ -59,6 +59,9 @@
     <ClInclude Include="myToolStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="myAddress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="loader-config.json">
