@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "虫棍定型文", "虫棍�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "骰子剑", "骰子剑\骰子剑.vcxproj", "{6FDA733D-5E9F-4AAE-8699-35E2A9C37E72}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fsm查看器", "Fsm查看器\Fsm查看器.vcxproj", "{15938962-3631-4D07-9705-27E43C0830D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -161,6 +163,14 @@ Global
 		{6FDA733D-5E9F-4AAE-8699-35E2A9C37E72}.Release|x64.Build.0 = Release|x64
 		{6FDA733D-5E9F-4AAE-8699-35E2A9C37E72}.Release|x86.ActiveCfg = Release|Win32
 		{6FDA733D-5E9F-4AAE-8699-35E2A9C37E72}.Release|x86.Build.0 = Release|Win32
+		{15938962-3631-4D07-9705-27E43C0830D8}.Debug|x64.ActiveCfg = Debug|x64
+		{15938962-3631-4D07-9705-27E43C0830D8}.Debug|x64.Build.0 = Debug|x64
+		{15938962-3631-4D07-9705-27E43C0830D8}.Debug|x86.ActiveCfg = Debug|Win32
+		{15938962-3631-4D07-9705-27E43C0830D8}.Debug|x86.Build.0 = Debug|Win32
+		{15938962-3631-4D07-9705-27E43C0830D8}.Release|x64.ActiveCfg = Release|x64
+		{15938962-3631-4D07-9705-27E43C0830D8}.Release|x64.Build.0 = Release|x64
+		{15938962-3631-4D07-9705-27E43C0830D8}.Release|x86.ActiveCfg = Release|Win32
+		{15938962-3631-4D07-9705-27E43C0830D8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -178,6 +188,7 @@ Global
 		{46D99094-85AF-4D33-9E68-EC42E394BAB8} = {12C6CB3B-8095-4EF0-BD7D-EF433D5EB95D}
 		{98CDF26D-ACEB-4808-8AE3-C3C738FC336E} = {12C6CB3B-8095-4EF0-BD7D-EF433D5EB95D}
 		{6FDA733D-5E9F-4AAE-8699-35E2A9C37E72} = {12C6CB3B-8095-4EF0-BD7D-EF433D5EB95D}
+		{15938962-3631-4D07-9705-27E43C0830D8} = {12C6CB3B-8095-4EF0-BD7D-EF433D5EB95D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0159EE-22D5-460B-893C-8F074349F7EB}

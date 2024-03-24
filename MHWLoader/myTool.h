@@ -506,6 +506,10 @@ namespace tool {
         };
 
         map <string, SimpleNumericCondition> simpleNumericConditions;
+        struct RepeatContidion {
+            int value;
+        };
+        map <string, RepeatContidion> repeatConditions;
     public:
         // 数值条件检查
         template<typename T>
@@ -588,6 +592,24 @@ namespace tool {
                     simpleNumericConditions[identifier] = { lockCondition };
                     return true;
                 }
+            }
+            return false;
+        }
+        template<typename T>
+        bool CheckRepeatCondition(const T& value, const std::string& identifier) {
+            auto it = repeatConditions.find(identifier);
+            if (it != repeatConditions.end()) {
+                // 如果找到了标识符，但当前值不等于锁定条件，则解锁
+                if (value != it->second.value) {
+                    repeatConditions.erase(it);  // 解锁，从map中移除
+                    return false;
+                }
+            }
+            else {
+                // 如果没找到标识符，但当前值等于锁定条件，则上锁
+                    // 上锁，添加到map中
+                 repeatConditions[identifier] = { value };
+                 return true;
             }
             return false;
         }

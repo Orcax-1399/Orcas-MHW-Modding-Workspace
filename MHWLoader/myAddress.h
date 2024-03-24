@@ -5,6 +5,7 @@
 
 namespace addressResources {
 	static undefined(*HitPtr)(undefined*, undefined*) = (undefined(*)(undefined*, undefined*))0x141F5048B;
+	undefined(*doDamageFunctionPtr)(undefined*, undefined*) = (undefined(*)(undefined*, undefined*))0x1411B7BB0;
 	/// <summary>
 	/// 参数1*：怪物指针
 	/// 参数2：伤害

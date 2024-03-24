@@ -10,13 +10,21 @@ using namespace std;
 using namespace loader;
 using namespace tool;
 
+onTimeSequenceButtons clutchButtons({ 67 ,76 ,85 });
+auto modActivation = false;
 
 void onTime() {
-    vector<int> fsmTable = GetFSM();
-    //LOG(WARN) << fsmTable[0];
-    //LOG(WARN) << fsmTable[1];
+    auto fsm = GetFSMInfo();
     vector<int> clutchActionTable{ 677, 678, 679 };
-    if (find(clutchActionTable.begin(), clutchActionTable.end(), fsmTable[1]) != clutchActionTable.end())
+    if (clutchButtons.IsMultipleButtonPressed())
+    {
+        modActivation = !modActivation;
+        ::stringstream ss;
+        ss << "瞬移飞翔爪mod: " << (modActivation ? "开启" : "关闭");
+        ShowMessage(ss.str());
+    }
+
+    if (modActivation && isIn<int>(clutchActionTable, fsm.fsmId))
     {
         SetFSM(1, 680);
     }
